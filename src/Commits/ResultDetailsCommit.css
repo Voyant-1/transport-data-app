@@ -1,0 +1,170 @@
+/* General Styles */
+.ResultDetails {
+    text-align: left;
+    padding: 20px;
+    color: #333;
+    font-family: 'Roboto', sans-serif;
+    background-color: #005e8c;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+  
+  /* Navigation Bar Styles */
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #333333;
+    padding: 15px 30px;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+  }
+  
+  .navbar-logo img {
+    height: 40px;
+  }
+  
+  .navbar-links {
+    display: flex;
+    gap: 30px;
+  }
+  
+  .navbar-links .nav-link {
+    color: #f2f2f2;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    padding: 10px 15px;
+    border-radius: 5px;
+  }
+  
+  .navbar-links .nav-link:hover {
+    color: #005e8c;
+    background-color: #ffffff33;
+  }
+  
+  /* Carrier Information Container */
+  .carrier-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px; /* Adds spacing below the carrier info */
+    max-width: 1800px;
+  }
+  
+  /* Sidebar and Main Content Layout */
+  .main-layout {
+    display: flex;
+  }
+  
+  .content-container {
+    flex: 1;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-sizing: border-box;
+    margin-left: 20px;
+  }
+  
+  /* Tab Navigation */
+  .tab-navigation {
+    display: flex;
+    gap: 0px; /* No gap between tabs for seamless overlap */
+    margin-bottom: 20px;
+    position: relative; /* Allows positioning of overlapping buttons */
+  }
+  
+  .tab-navigation button {
+    padding: 10px 20px;
+    border: none;
+    background-color: transparent; /* Initially transparent */
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, font-size 0.3s ease, transform 0.3s ease;
+    border-radius: 5px; /* Rounded corners at the top */
+    position: relative;
+    z-index: 1;
+    font-weight: 500;
+    font-size: 16px;
+  }
+  
+  .tab-navigation button:hover {
+    background-color: rgba(0, 94, 140, 0.7); /* Semi-transparent background on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Shadow for hover effect */
+    z-index: 2; /* Raise z-index on hover for overlapping effect */
+    transform: scale(1.05); /* Slightly increase tab size on hover */
+    font-size: 18px; /* Increase font size on hover */
+  }
+  
+  .tab-navigation .active-tab {
+    background-color: #005e8c; /* Solid color when active */
+    color: white;
+    z-index: 3; /* Ensure active tab stays above others */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+    font-size: 16px; /* Regular font size for active tab */
+    transform: none; /* Remove transform for active tab */
+  }
+  
+  /* Tab Content */
+  .tab-content section {
+    display: none;
+  }
+  
+  .tab-content section.active {
+    display: block;
+  }
+  
+  /* Equipment Summary */
+  .equipment-summary {
+    max-width: 350px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 20px;
+  }
+  
+  .equipment-summary ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .equipment-summary li {
+    margin-bottom: 10px;
+  }
+  
+  /* Scrollable Inspections Section */
+  .inspection-container {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto; /* Makes the container scrollable */
+  }
+  
+  .scrollable-inspections {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .scrollable-inspections li {
+    margin-bottom: 10px;
+  }
+  
+  .scrollable-inspections p {
+    margin: 0;
+    padding: 5px;
+  }
+  
