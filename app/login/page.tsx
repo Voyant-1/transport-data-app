@@ -13,6 +13,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
+  const [preAuthToken, setPreAuthToken] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -56,6 +57,7 @@ export default function LoginPage() {
       }
 
       // MFA required, show code input
+      setPreAuthToken(data.preAuthToken || "");
       setStep("code");
       setLoading(false);
     } catch {
@@ -74,6 +76,7 @@ export default function LoginPage() {
         email,
         password,
         code,
+        preAuthToken,
         redirect: false,
       });
 

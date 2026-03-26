@@ -1,6 +1,7 @@
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import prisma from "./prisma";
 
 export const authConfig: NextAuthConfig = {
@@ -10,49 +11,48 @@ export const authConfig: NextAuthConfig = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
         code: { label: "2FA Code", type: "text" },
+        preAuthToken: { label: "Pre-auth Token", type: "text" },
       },
       async authorize(credentials) {
         const email = credentials?.email as string;
         const password = credentials?.password as string;
         const code = credentials?.code as string;
+        const preAuthToken = credentials?.preAuthToken as string;
 
         if (!email || !password) return null;
 
-        const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
-        if (!user) return null;
-        if (!user.isActive) return null;
+        // Fast path: verify using signed token issued by send-code (no DB needed)
+        if (code && preAuthToken) {
+          try {
+            const secret = process.env.NEXTAUTH_SECRET!;
+            const [payload, sig] = preAuthToken.split(".");
+            const expectedSig = crypto.createHmac("sha256", secret).update(payload).digest("base64url");
+            if (sig !== expectedSig) throw new Error("invalid sig");
 
-        // If MFA enabled and a code is provided, skip bcrypt re-verify —
-        // password was already checked in /api/auth/send-code when the code was issued.
-        // If no code yet, we still need to verify the password to know if we should send a code.
+            const data = JSON.parse(Buffer.from(payload, "base64url").toString());
+            if (data.exp < Date.now()) throw new Error("expired");
+            if (data.email !== email.toLowerCase()) throw new Error("email mismatch");
+
+            const expectedHmac = crypto.createHmac("sha256", secret).update(code + data.email).digest("hex");
+            if (data.codeHmac !== expectedHmac) throw new Error("invalid code");
+
+            // Clean up DB code async (non-blocking)
+            prisma.verificationCode.deleteMany({ where: { email: data.email } }).catch(() => {});
+
+            return { id: data.userId, email: data.email, name: data.name, role: data.role };
+          } catch {
+            throw new Error("INVALID_CODE");
+          }
+        }
+
+        // Standard path: password-only login (no MFA) or MFA with DB fallback
+        const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+        if (!user || !user.isActive) return null;
+
         if (!code) {
           const valid = await bcrypt.compare(password, user.password);
           if (!valid) return null;
-        }
-
-        // If MFA enabled, verify the code
-        if (user.mfaEnabled) {
-          if (!code) {
-            throw new Error("2FA_REQUIRED");
-          }
-
-          const emailLower = email.toLowerCase();
-
-          const verification = await prisma.verificationCode.findFirst({
-            where: {
-              email: emailLower,
-              code,
-              expiresAt: { gt: new Date() },
-            },
-            orderBy: { createdAt: "desc" },
-          });
-
-          if (!verification) {
-            throw new Error("INVALID_CODE");
-          }
-
-          // Delete used code
-          await prisma.verificationCode.delete({ where: { id: verification.id } });
+          if (user.mfaEnabled) throw new Error("2FA_REQUIRED");
         }
 
         return { id: user.id, email: user.email, name: user.name, role: user.role };
