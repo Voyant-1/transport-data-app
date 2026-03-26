@@ -38,13 +38,6 @@ export const authConfig: NextAuthConfig = {
 
           const emailLower = email.toLowerCase();
 
-          // Debug: check what codes exist for this email
-          const allCodes = await prisma.verificationCode.findMany({
-            where: { email: emailLower },
-          });
-          console.log(`[2FA DEBUG] Looking for code="${code}" for email="${emailLower}"`);
-          console.log(`[2FA DEBUG] Found ${allCodes.length} codes in DB:`, allCodes.map(c => ({ code: c.code, expires: c.expiresAt, now: new Date() })));
-
           const verification = await prisma.verificationCode.findFirst({
             where: {
               email: emailLower,
@@ -55,7 +48,6 @@ export const authConfig: NextAuthConfig = {
           });
 
           if (!verification) {
-            console.log(`[2FA DEBUG] No matching verification found!`);
             throw new Error("INVALID_CODE");
           }
 
