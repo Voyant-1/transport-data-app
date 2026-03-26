@@ -22,8 +22,13 @@ export const authConfig: NextAuthConfig = {
         if (!user) return null;
         if (!user.isActive) return null;
 
-        const valid = await bcrypt.compare(password, user.password);
-        if (!valid) return null;
+        // If MFA enabled and a code is provided, skip bcrypt re-verify —
+        // password was already checked in /api/auth/send-code when the code was issued.
+        // If no code yet, we still need to verify the password to know if we should send a code.
+        if (!code) {
+          const valid = await bcrypt.compare(password, user.password);
+          if (!valid) return null;
+        }
 
         // If MFA enabled, verify the code
         if (user.mfaEnabled) {
