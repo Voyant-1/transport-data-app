@@ -1722,7 +1722,7 @@ tbody tr:nth-child(even) {
   display: flex;
   justify-content: center;
   margin-bottom: 24px;
-  background: var(--color-primary);
+  background: #333333;
   margin: -40px -40px 24px -40px;
   padding: 24px;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
