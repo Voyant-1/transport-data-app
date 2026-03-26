@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { after } from "next/server";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { send2FACode } from "@/lib/mail";
@@ -35,8 +36,8 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  // Send code
-  await send2FACode(email, code);
+  // Send code in background so the response returns immediately
+  after(() => send2FACode(email, code));
 
   return NextResponse.json({ mfaRequired: true, codeSent: true });
 }
